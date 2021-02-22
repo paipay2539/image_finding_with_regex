@@ -1,6 +1,8 @@
 import sys
 sys.dont_write_bytecode = True
 import imgFindRegexLib as imreg
+import imgFindRegexLib1D as imreg1D
+import time
 
 
 def main():
@@ -14,6 +16,17 @@ def main():
     sub2_pil = imreg.cv2pil(sub2_cv)
     sub3_pil = imreg.cv2pil(sub3_cv)
     main_pil = imreg.cv2pil(main_cv)
+    for i in range(100):
+        start_time = time.time()
+        position = imreg.subimg_location(main_pil, sub_pil)
+        position_time = time.time()
+        position1D = imreg1D.subimg_location(main_pil, sub_pil)
+        position1D_time = time.time()
+        all_time = position1D_time - start_time
+        subimg_location_time = (position_time-start_time)/all_time*100
+        subimg1D_location_time = (position1D_time-position_time)/all_time*100
+        print(subimg_location_time, subimg1D_location_time)
+        print(position, position1D)
 
     imreg.drawRectangle(main_cv, main_pil, sub_pil)
     imreg.drawRectangle(main_cv, main_pil, sub2_pil)
