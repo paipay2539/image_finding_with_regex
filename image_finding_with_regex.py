@@ -95,9 +95,9 @@ def subimg_location(haystack, needle):
 # print(subimg_location(main, sub))
 # print(subimg_location(im3,im2))
 # print(subimg_location(im_multi,im_multi2))
-drawRectangle(main, sub)
-drawRectangle(main, sub2)
-drawRectangle(main, sub3)
+drawRectangle(img, main, sub)
+drawRectangle(img, main, sub2)
+drawRectangle(img, main, sub3)
 image = cv2.circle(img, subimg_location(main, sub3),
                    radius=10, color=(0, 0, 255), thickness=-1)
 cv2.imshow("OpenCV Image Reading", img)
