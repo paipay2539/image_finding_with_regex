@@ -1,30 +1,32 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-import numpy as np
 import cv2
 import math
-from PIL.Image import *
+from PIL import Image
 import re
 
-main = open(r"C:\Users\KPY35\Desktop\PYE\image_finding_with_regex\data\main.png")
-sub = open(r"C:\Users\KPY35\Desktop\PYE\image_finding_with_regex\data\sub.png")
-sub2 = open(r"C:\Users\KPY35\Desktop\PYE\image_finding_with_regex\data\sub2.png")
-sub3 = open(r"C:\Users\KPY35\Desktop\PYE\image_finding_with_regex\data\sub3.png")
-img = cv2.imread(r"C:\Users\KPY35\Desktop\PYE\image_finding_with_regex\data\main.png")
+workspacePath = r"C:\Users\KPY35\Desktop\PYE\image_finding_with_regex\\"
+main = Image.open(workspacePath + "data\\main.png")
+sub = Image.open(workspacePath + "data\\sub.png")
+sub2 = Image.open(workspacePath + "data\\sub2.png")
+sub3 = Image.open(workspacePath + "data\\sub3.png")
+img = cv2.imread(workspacePath + "data\\main.png")
 
 
+def cv2pil(frame):
+    return Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
-im = new('RGB', (2, 2), 'white')
-im2 = new('RGB', (1, 1), (0, 255, 0))
-im3 = new('RGB', (3, 3), 'white')
+
+main = cv2pil(img)
+
+im = Image.new('RGB', (2, 2), 'white')
+im2 = Image.new('RGB', (1, 1), (0, 255, 0))
+im3 = Image.new('RGB', (3, 3), 'white')
 im.putpixel((0, 1), (0, 0, 255))  # x, y
 im.putpixel((1, 0), (0, 255, 0))
 im.putpixel((1, 1), (255, 0, 0))
 im3.putpixel((2, 1), (0, 255, 0))
 
-im_multi = new('RGB', (3,3), 'white')
-im_multi2 = new('RGB', (2,2), (0, 0, 0))
+im_multi = Image.new('RGB', (3, 3), 'white')
+im_multi2 = Image.new('RGB', (2, 2), (0, 0, 0))
 im_multi.putpixel((1, 1), (0, 0, 0))
 im_multi.putpixel((2, 1), (0, 0, 0))
 im_multi.putpixel((1, 2), (0, 0, 0))
@@ -36,6 +38,7 @@ split = [im_str[i:i+im.size[0]*3]
          for i in range(0, len(im_str), im.size[0] * 3)]
 # print(im_str,split)
 
+
 def subimg_location(haystack, needle):
     haystack = haystack.convert('RGB')
     needle = needle.convert('RGB')
@@ -43,14 +46,14 @@ def subimg_location(haystack, needle):
         .replace('\\n', "")
     needle_str = (str(needle.tobytes("hex", "rgb"))[2:])[:-1]\
         .replace('\\n', "")
-    print("haystack_str:", haystack_str)
-    print("len(haystack_str):", len(haystack_str))
-    print("needle_str:", needle_str)
+    # print("haystack_str:", haystack_str)
+    # print("len(haystack_str):", len(haystack_str))
+    # print("needle_str:", needle_str)
 
     gap_size = (haystack.size[0]-needle.size[0])*3*2
-    print("gap_size:", gap_size)
+    # print("gap_size:", gap_size)
     gap_regex = '.{' + str(gap_size) + '}'
-    print("needle.size[0]:", needle.size[0])
+    # print("needle.size[0]:", needle.size[0])
     # Split b into needle.size[0] chunks
     chunk_size = needle.size[0]*3*2
     split = [needle_str[i:i+chunk_size]
@@ -61,7 +64,7 @@ def subimg_location(haystack, needle):
 
     # Build regex
     regex = re.escape(split[0])
-    print("split", split)
+    # print("split", split)
     for i in range(1, len(split)):
         # print(gap_regex,re.escape(split[i]))
         regex += gap_regex + re.escape(split[i])
@@ -83,18 +86,21 @@ def subimg_location(haystack, needle):
     return (left, top)
 
 
-print(subimg_location(main, sub))
+# print(subimg_location(main, sub))
 # print(subimg_location(im3,im2))
 # print(subimg_location(im_multi,im_multi2))
-cv2.rectangle(img, subimg_location(main, sub),
-              (subimg_location(main, sub)[0] + sub.size[0],
-              subimg_location(main, sub)[1] + sub.size[1]), (0, 0, 255), 2)
-cv2.rectangle(img, subimg_location(main, sub2),
-              (subimg_location(main, sub2)[0] + sub2.size[0],
-              subimg_location(main, sub2)[1] + sub2.size[1]), (0, 0, 255), 2)
-cv2.rectangle(img, subimg_location(main, sub3),
-              (subimg_location(main, sub3)[0] + sub3.size[0],
-              subimg_location(main, sub3)[1] + sub3.size[1]), (0, 0, 255), 2)
+
+
+def drawRectangle(haystack, needle):
+    cv2.rectangle(img, subimg_location(haystack, needle),
+                  (subimg_location(haystack, needle)[0] + needle.size[0],
+                  subimg_location(haystack, needle)[1] + needle.size[1]),
+                  (0, 0, 255), 2)
+
+
+drawRectangle(main, sub)
+drawRectangle(main, sub2)
+drawRectangle(main, sub3)
 image = cv2.circle(img, subimg_location(main, sub3),
                    radius=10, color=(0, 0, 255), thickness=-1)
 cv2.imshow("OpenCV Image Reading", img)
