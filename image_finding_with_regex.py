@@ -4,11 +4,11 @@ from PIL import Image
 import re
 
 
-def cv2pil(frame):
-    return Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+def cv2pil(img):
+    return Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
 
-def drawRectangle(haystack, needle):
+def drawRectangle(img, haystack, needle):
     cv2.rectangle(img, subimg_location(haystack, needle),
                   (subimg_location(haystack, needle)[0] + needle.size[0],
                   subimg_location(haystack, needle)[1] + needle.size[1]),
